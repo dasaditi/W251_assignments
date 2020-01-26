@@ -5,6 +5,9 @@ import ibm_boto3
 from ibm_botocore.client import Config
 from ibm_botocore.exceptions import ClientError
 import ibm_s3transfer.manager
+import numpy as np
+import cv2
+from datetime import datetime
 
 #mosquito configuration
 LOCAL_MQTT_HOST="cloud_mosquitto"
@@ -37,15 +40,16 @@ def log_client_error(e):
 
 def log_error(msg):
     print("UNKNOWN ERROR: {0}\n".format(msg))
+
   
 def get_uuid():
     l = list(range(1, 1000))
     return str(l.pop(0))
         
 def uploadToObjectStore(message):
-	try:
-		item_name = "face_" + get_uuid() + ".png"
-    	cos_cli.put_object(
+    try:
+        item_name = "face_" + datetime.now().strftime("%m_%d_%YT%H_%M_%S") + ".png"
+        cos_cli.put_object(
             Bucket=BUCKET_NAME,
             Key=item_name,
             Body=message
@@ -55,26 +59,31 @@ def uploadToObjectStore(message):
     except ClientError as be:
         log_client_error(be)
     except Exception as e:
-        log_error("Unable to create text file: {0}".format(e))    
-        
-        
-        
-        
+        log_error("Unable to create text file: {0}".format(e))
+
+
+
+
 def on_connect_local(client, userdata, flags, rc):
-        print("connected to local broker with rc: " + str(rc))
-        client.subscribe(LOCAL_MQTT_TOPIC)
-	
+    print("connected to local broker with rc: " + str(rc))
+    client.subscribe(LOCAL_MQTT_TOPIC)
+
 def on_message(client,userdata, msg):
   try:
-    print("message received!")	
+    print("message received!")
     # if we wanted to re-publish this message, something like this should work
     msg = msg.payload
-    print(msg) 
+    print(msg)
+    f = np.frombuffer(msg, dtype='uint8')
+    print("After f  : ",f)
+    img = cv2.imdecode(f, flags=1)
+    print('Image ', img.shape)
     #Upload the message to S3
     uploadToObjectStore(msg)
-    
+
   except:
     print("Unexpected error:", sys.exc_info()[0])
+
 
 local_mqttclient = mqtt.Client()
 local_mqttclient.on_connect = on_connect_local
