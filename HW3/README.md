@@ -1,29 +1,37 @@
 # HW3 assignment
 
----
+
 The overall goal of the assignment is to be able to capture faces in a video stream coming from the edge in real time, transmit them to the cloud in real time, and for now, just save these faces in the cloud for long term storage(S3-object storage).
 
-1) Things that needs to be done on TX2
-	a) Alpine Linux as the base OS for your containers
-	Reading video from a USB webcam
-	b) Have a Face detector component OpenCV
-		Use OpenCV and write an application that scans the video frames coming from the connected USB camera for faces.
-		When one or more faces are detected in the frame, the application should cut them out of the frame and send via a binary message each.
+## Things that needs to be done on TX2
+- a) Read video from a USB webcam. Use OpenCV and write an application that scans the video frames coming from the connected USB camera for face detection.When one or more faces are detected in the frame, the application should cut them out of the frame and send to cloud storage via MQTT.
 
-	c) You will be using an MQTT client to send and receive messages, and MQTT broker as the server component of this architecture.
-		install a local MQTT broker in the TX2 and your face detector sends its messages to this broker first.
-	d) you write another component that receives these messages from the local broker, and sends them to the cloud [MQTT broker].	
-	
-	Details in
-		i) cd edge_mqtt_broker
-			docker build -t edge_mosquitto .	
-			
-		ii) cd edge_face_detection folder
-			Build docker : docker build -t edge_face_detection .
-			
-		ii) Linking containers :docker network create --driver bridge hw03
-		
-2) Things that needs to be done on Cloud
+- b) We will be using an MQTT client to send and receive messages, and MQTT broker as the server component of this architecture.Install a local MQTT broker in the TX2 and your face detector sends its messages to this broker first.
+
+- c) We write another component that receives these messages from the local broker, and sends them to the cloud [MQTT broker].	
+- d) So in total there are three deocker container ruuning in TX2
+```	
+	i) edge_face_detection
+		sudo docker build -t edge_face_detection .
+		Give Access: xhost local:root
+		sudo docker run --privileged --name edge_face_detection  --network hw03  -v /dev/video1:/dev/video1 -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=unix$DISPLAY -ti edge_face_detection
+	ii) edge_mqtt_broker
+		sudo docker build -t edge_mosquitto .
+		sudo docker run --name edge_mosquitto --network hw03  -ti edge_mosquitto
+	ii) edge_mqtt_forwarder
+		sudo docker build -t edge_mqtt_forwarder .	
+		sudo docker run --name edge_mqtt_forwarder --network hw03  -ti edge_mqtt_forwarder
+```	
+
+### All these three containers are connected via docker network 	
+
+```
+	docker network create --driver bridge hw03
+```
+
+- e) In order for the docker to get access to the camera hardware we need to provide priveledges to the container. We need to run xhost local:root before running the docker container.
+
+## Things that needs to be done on Cloud
 	a) you need to provision a lightweight virtual machine (1-2 CPUs and 2-4 G of RAM should suffice) 
 		Details in 
 			i) "Create a virtual server from scratch through CLI"
