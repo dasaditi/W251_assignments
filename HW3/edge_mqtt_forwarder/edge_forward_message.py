@@ -6,7 +6,8 @@ LOCAL_MQTT_PORT=1883
 LOCAL_MQTT_TOPIC="edge_facedetection_topic"
 
 #mosquito configuration
-CLOUD_MQTT_HOST="cloud_mosquitto"
+#CLOUD_MQTT_HOST="mqtt.eclipse.org"
+CLOUD_MQTT_HOST="169.45.88.52"
 CLOUD_MQTT_PORT=1883
 CLOUD_MQTT_TOPIC="cloud_facedetection_topic"
 
@@ -22,16 +23,17 @@ def cloud_on_connect(client, userdata, flags, rc):
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-    client.subscribe(CLOUD_MQTT_TOPIC)
+    #client.subscribe(CLOUD_MQTT_TOPIC)
 
 
 def edge_on_message(client, userdata, msg):
-    print("Message received on " + msg.topic + ": " + str(msg.payload))
-
-    print("Publishing message to the cloud...")
-    pub_resp = cloud_client.publish(CLOUD_MQTT_TOPIC, msg.payload)
-    print("Publish response: " + str(pub_resp))
-    
+    try:
+        print("Message received on " + msg.topic + ": " + str(msg.payload))
+        print("Publishing message to the cloud...")
+        pub_resp = cloud_client.publish(CLOUD_MQTT_TOPIC, msg.payload)
+        print("Publish response: " + str(pub_resp))
+    except:
+        print("unexpected error")
 
 def cloud_on_publish(client, userdata, result):
     print("Message published: " + str(result))
