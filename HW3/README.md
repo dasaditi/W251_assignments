@@ -1,8 +1,7 @@
-# W251_assignments
-HW3
-----
-The overall goal of the assignment is to be able to capture faces in a video stream coming from the edge in real time, transmit them to the cloud in real time, 
-and - for now, just save these faces in the cloud for long term storage(S3-object storage).
+# HW3 assignment
+
+---
+The overall goal of the assignment is to be able to capture faces in a video stream coming from the edge in real time, transmit them to the cloud in real time, and for now, just save these faces in the cloud for long term storage(S3-object storage).
 
 1) Things that needs to be done on TX2
 	a) Alpine Linux as the base OS for your containers
