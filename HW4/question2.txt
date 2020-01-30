@@ -1,0 +1,28 @@
+Q1: Name all the layers in the network, make sure you understand what they do.
+
+- Input: input array
+- Conv: A sort of compression layer that transforms an image based on filter size
+- Relu: An activation layer
+- Pool: Usually max or average. A sort of summary layer that condenses layers based of a striding filter. 
+
+Q2: Experiment with the number and size of filters in each layer. Does it improve the accuracy?
+
+- Mostly yes. Making the conv filters 16 and 64 from 8 and 16  reduced the accuracy to 0.90-0.95 from 0.93-0.98
+
+Q3: Remove the pooling layers. Does it impact the accuracy?
+
+- The accuracy hovers around 0.9-0.99 but it is not very stable and takes longer to reach somewhat of a plateau
+
+Q4: Add one more conv layer. Does it help with accuracy?
+
+- layer_defs.push({type:'conv', sx:5, filters:8, stride:1, pad:2, activation:'relu'});
+- The above line was added after the second pooling. The validation accuracy seems to hover around 0.92 - 0.96
+- Not too much difference from prior observations.
+
+Q5: Increase the batch size. What impact does it have?
+
+- The impact seems to be in line with what is seen before. It hovers around 0.92-0.97
+
+Q6: What is the best accuracy you can achieve? Are you over 99%? 99.5%?
+
+- It occasionally hits 99% but unable to across 99.5%
