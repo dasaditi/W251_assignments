@@ -6,7 +6,7 @@ Training takes about 2 days per 100k steps on V100s.
 
 ### 2. Do you think your model is fully trained? How can you tell?
 
-The network is approaching convergence. 
+It's almost trained. The network is approaching convergence. 
 ![bleu](images/bleu.png)
 
 ### 3. Were you overfitting?
@@ -36,7 +36,7 @@ The learning rate rises for 8000 steps and then decreases.
 ![learning_rate](images/learning_rate.png)
 
 ### 7. How big was your training set (mb)? How many training lines did it contain?
-The training data is 14GB.
+The deutch dataset is about 710MB whereas the english one is 636MB. Both datasets have 4562102 lines.
 
 ### 8. What are the files that a TF checkpoint is comprised of?
 The meta file contains information about the graph.  The data file contains all the values of the variables.  The index file contains checkpoint indexing information.
@@ -49,4 +49,5 @@ Global steps per second hovers just below 0.6.  That means a single step takes a
 ![global_step](images/global_step.png)
 
 ### 11. How does that correlate with the observed network utilization between nodes?
-Network utilization is not limiting the data available to the GPUs.
+Network utilization is not limiting the data available to the GPUs.Network should be inversely related to step. 
+The better the network, the more steps that should be able to be processed per unit time.
