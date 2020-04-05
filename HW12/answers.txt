@@ -1,0 +1,47 @@
+Q: How much disk space is used after step 4?
+
+The overall memory available after was:
+
+Inode Information
+-----------------
+Number of used inodes:            9400
+Number of free inodes:          300872
+Number of allocated inodes:     310272
+Maximum number of inodes:       310272
+
+
+Q: Did you parallelize the crawlers in step 4? If so, how?
+
+
+I did attempt to parallelize the process using the bash script below:
+
+```
+i=0
+for f in reddit_urls/*.txt; do
+
+  python3 reddit_crawler.py --url $f &
+
+  i=$((i+1))
+  echo $i
+
+  if [ $i -ge 4 ]
+  then
+    i=0
+    wait $!
+  fi
+
+done 2>/dev/null
+```
+
+The attempt of this script is to read all the text files in the url and then run python script for it. I only attempted 4 threads at a time to not lag the system.
+
+
+Q: Describe the steps to de-duplicate the web pages you crawled.
+
+Unfortunately, I was not able to gather all the text files for some reason so there was no need to dedup.
+
+If I had to do it though, I could just write a python script to sort and delete files appropriately.
+
+Q: Submit the list of files you that your LazyNLP spiders crawled (ls -la).
+
+Please refer to *_file_list.txt files. 
